@@ -27,18 +27,25 @@
         .warning-text { color: var(--warning); font-weight: bold; animation: shake 0.4s; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
         
-        /* Science Overlay styling */
+        /* Science Overlay Logic */
         .science-label { fill: var(--science); font-size: 7.5px; font-weight: 800; text-transform: uppercase; opacity: 0; transition: 0.3s; white-space: nowrap; }
         .science-line { stroke: var(--science); stroke-width: 0.5; stroke-dasharray: 2; opacity: 0; transition: 0.3s; }
         
         .science-active .science-label { opacity: 1 !important; }
         .science-active .science-line { opacity: 0.4 !important; }
 
-        /* Force Visibility and safe width for PDF Export */
-        #pdf-container.pdf-export-mode { padding: 50px !important; width: 1100px !important; background: white !important; }
-        #pdf-container.pdf-export-mode .science-label { opacity: 1 !important; }
-        #pdf-container.pdf-export-mode .science-line { opacity: 0.4 !important; }
-        #pdf-container.pdf-export-mode #contact-info-footer { opacity: 1 !important; visibility: visible !important; display: flex !important; }
+        /* RELIABLE PDF EXPORT LOCK */
+        .pdf-export-mode {
+            width: 800px !important;
+            min-width: 800px !important;
+            max-width: 800px !important;
+            background: #ffffff !important;
+            padding: 40px !important;
+            margin: 0 !important;
+            box-sizing: border-box !important;
+        }
+        .pdf-export-mode .science-label { opacity: 1 !important; }
+        .pdf-export-mode .science-line { opacity: 0.4 !important; }
 
         @media print { .no-print { display: none !important; } }
     </style>
@@ -65,7 +72,7 @@
     <main class="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-8 flex-grow">
         
         <section class="md:col-span-3 lg:col-span-2 flex items-center justify-center bg-white/20 p-4 border border-black/[0.02] no-print rounded-lg">
-            <svg viewBox="0 0 100 220" class="w-full h-auto max-w-[140px] md:max-w-full md:max-h-[70vh]">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 220" class="w-full h-auto max-w-[140px] md:max-w-full md:max-h-[70vh]">
                 <circle cx="50" cy="25" r="14" class="map-part" id="part-head"/>
                 <rect x="35" y="45" width="30" height="70" rx="2" class="map-part" id="part-torso"/>
                 <rect x="25" y="48" width="50" height="10" rx="2" class="map-part" id="part-shoulders"/>
@@ -105,10 +112,10 @@
         </section>
 
         <section id="pdf-container" class="md:col-span-5 lg:col-span-7 bg-white p-6 md:p-10 border border-black/[0.03] shadow-sm flex flex-col justify-between rounded-lg">
-            <div class="pdf-safe-margin" style="padding-left: 20px;">
+            <div>
                 <div class="flex justify-between items-start mb-8 border-b border-black/10 pb-6">
-                    <div style="min-width: 300px;">
-                        <h2 class="minimal-caps text-base md:text-lg tracking-[0.3em]" style="margin-left: 0;">STUDIO CELINE33</h2>
+                    <div>
+                        <h2 class="minimal-caps text-base md:text-lg tracking-[0.3em]" style="white-space: nowrap;">STUDIO CELINE33</h2>
                         <p id="pdfProject" class="serif italic text-sm opacity-50">TECHNICAL BLUEPRINT</p>
                     </div>
                     <div class="text-right">
@@ -119,7 +126,7 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-8">
                     <div id="sketch-area" class="lg:col-span-7 flex flex-col items-center bg-zinc-50/50 p-6 rounded-lg min-h-[260px] relative">
-                        <svg id="chair-sketch" width="280" height="200" viewBox="0 0 280 200" class="overflow-visible">
+                        <svg id="chair-sketch" xmlns="http://www.w3.org/2000/svg" width="280" height="200" viewBox="0 0 280 200" class="overflow-visible">
                             <path id="sketch-back" d="M60 140 L40 40" stroke="black" stroke-width="2.5" fill="none"/>
                             <rect id="sketch-seat" x="60" y="140" width="100" height="4" fill="black"/>
                             <rect id="sketch-cushion-seat" x="60" y="130" width="100" height="10" rx="2" fill="#d1d5db"/>
@@ -144,14 +151,14 @@
                 </div>
             </div>
 
-            <div id="contact-info-footer" class="pt-6 border-t-2 border-black/5 flex justify-between items-end text-[10.5px] minimal-caps">
+            <div id="contact-info-footer" class="pt-6 border-t-2 border-black/5 flex justify-between items-end text-[11px] minimal-caps opacity-50">
                 <div class="space-y-1">
                     <p class="font-bold">Designed Simply // 2026</p>
-                    <p id="date-stamp" class="opacity-40"></p>
+                    <p id="date-stamp" class="opacity-60"></p>
                 </div>
                 <div class="text-right space-y-1">
-                    <p class="font-bold text-[#aa8e18]">Instagram: @studioceline33</p>
-                    <p class="font-bold text-black opacity-80">Phone: +91 8787653957</p>
+                    <p class="font-bold text-[#aa8e18]">IG: @studioceline33</p>
+                    <p class="font-bold text-black">+91 8787653957</p>
                 </div>
             </div>
         </section>
@@ -160,8 +167,8 @@
     <footer class="no-print w-full py-8 text-center mt-8 border-t border-black/5 bg-zinc-50">
         <p class="serif italic text-[12px] md:text-[14px] opacity-70 mb-4 font-light">If you need help...</p>
         <div class="flex flex-col md:flex-row justify-center items-center gap-6 md:gap-12">
-            <a href="https://www.instagram.com/studioceline33/" target="_blank" class="minimal-caps text-[10px] hover:text-[#aa8e18]">Instagram</a>
-            <a href="tel:+918787653957" class="minimal-caps text-[10px] hover:text-[#aa8e18]">+91 8787653957</a>
+            <a href="https://www.instagram.com/studioceline33/" target="_blank" class="minimal-caps text-[10px] hover:text-[#aa8e18] transition-colors">Instagram</a>
+            <a href="tel:+918787653957" class="minimal-caps text-[10px] hover:text-[#aa8e18] transition-colors">+91 8787653957</a>
         </div>
     </footer>
 
@@ -243,25 +250,32 @@
 
         async function exportPDF() {
             const e = document.getElementById('pdf-container');
-            e.classList.add('pdf-export-mode'); 
+            
+            // 1. Temporarily lock the live blueprint into perfect desktop dimensions
+            e.classList.add('pdf-export-mode');
+            
+            // 2. Await the browser's paint cycle to ensure styles and SVGs are locked
+            await new Promise(resolve => setTimeout(resolve, 300));
             
             const opt = {
-                margin: 0.5, 
-                filename: `SC33_TECHNICAL_BLUEPRINT.pdf`, 
+                margin: 0.5,
+                filename: `STUDIO_CELINE33_SPEC.pdf`,
                 image: { type: 'jpeg', quality: 1 },
                 html2canvas: { 
-                    scale: 4, 
+                    scale: 2, 
                     useCORS: true, 
                     letterRendering: true,
-                    windowWidth: 1200 // Prevent mobile squishing
+                    windowWidth: 800 // Forces capture engine to read the explicitly locked width
                 },
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
             };
 
             try {
+                // 3. Capture the live, locked DOM
                 await html2pdf().from(e).set(opt).save();
             } finally {
-                e.classList.remove('pdf-export-mode'); 
+                // 4. Instantly release the lock to return to normal responsive UI
+                e.classList.remove('pdf-export-mode');
             }
         }
 
