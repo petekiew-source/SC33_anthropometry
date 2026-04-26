@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Celine33 | Professional Design Atelier</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,300;0,400;1,300&family=Manrope:wght@200;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        :root { --bg: #fcfbf9; --accent: #1a1a1a; --highlight: #aa8e18; --warning: #b91c1c; --science: #2563eb; }
+        body { background-color: var(--bg); color: var(--accent); font-family: 'Manrope', sans-serif; min-height: 100vh; }
+        .serif { font-family: 'Noto Serif', serif; }
+        .minimal-caps { font-family: 'Manrope', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; }
+        
+        .map-part { fill: #e5e7eb; transition: 0.3s; }
+        .active-part { fill: var(--highlight) !important; filter: drop-shadow(0 0 6px rgba(170, 142, 24, 0.4)); }
+
+        .blueprint-label { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.6; margin-bottom: 2px; display: block; font-weight: 800; }
+        .input-unit { font-size: 8.5px; font-weight: 800; opacity: 0.3; text-transform: uppercase; margin-left: 4px; }
+        
+        input, select { border-bottom: 1px solid rgba(0,0,0,0.1); background: transparent; padding: 6px 0; font-weight: 300; font-size: 0.95rem; width: 100%; border-radius: 0; }
+        input:focus { outline: none; border-bottom-color: var(--highlight); }
+        
+        .warning-text { color: var(--warning); font-weight: bold; animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+        
+        /* Science Overlay styling */
+        .science-label { fill: var(--science); font-size: 7.5px; font-weight: 800; text-transform: uppercase; opacity: 0; transition: 0.3s; white-space: nowrap; }
+        .science-line { stroke: var(--science); stroke-width: 0.5; stroke-dasharray: 2; opacity: 0; transition: 0.3s; }
+        
+        .science-active .science-label { opacity: 1 !important; }
+        .science-active .science-line { opacity: 0.4 !important; }
+
+        /* Force Visibility and safe width for PDF Export */
+        #pdf-container.pdf-export-mode { padding: 50px !important; width: 1100px !important; background: white !important; }
+        #pdf-container.pdf-export-mode .science-label { opacity: 1 !important; }
+        #pdf-container.pdf-export-mode .science-line { opacity: 0.4 !important; }
+        #pdf-container.pdf-export-mode #contact-info-footer { opacity: 1 !important; visibility: visible !important; display: flex !important; }
+
+        @media print { .no-print { display: none !important; } }
+    </style>
+</head>
+<body class="p-4 md:p-8 flex flex-col">
+
+    <header class="max-w-7xl mx-auto w-full mb-8 flex flex-col md:flex-row justify-between items-center border-b border-black/5 pb-6 gap-4">
+        <div class="text-center md:text-left">
+            <h1 class="minimal-caps text-md md:text-lg tracking-[0.5em]">STUDIO CELINE33</h1>
+            <p class="serif italic text-xs md:text-sm opacity-50">Anthropometry Atelier Pro</p>
+        </div>
+        <div class="flex flex-wrap justify-center items-center gap-4 no-print">
+            <button id="scienceBtn" onclick="toggleScience()" class="bg-blue-50 text-blue-600 px-4 py-2 rounded-full text-[8.5px] font-extrabold uppercase border border-blue-100 transition-all">Insights: OFF</button>
+            <div class="flex bg-white px-4 py-1.5 rounded-full border border-black/5 text-[8.5px] font-extrabold gap-3">
+                <span class="opacity-40 uppercase">CM</span>
+                <button id="unitToggle" class="w-8 h-4 bg-zinc-200 rounded-full relative">
+                    <div id="toggleCircle" class="absolute w-2.5 h-2.5 bg-black rounded-full top-0.5 left-0.5 transition-all"></div>
+                </button>
+                <span class="opacity-40 uppercase">IN</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-8 flex-grow">
+        
+        <section class="md:col-span-3 lg:col-span-2 flex items-center justify-center bg-white/20 p-4 border border-black/[0.02] no-print rounded-lg">
+            <svg viewBox="0 0 100 220" class="w-full h-auto max-w-[140px] md:max-w-full md:max-h-[70vh]">
+                <circle cx="50" cy="25" r="14" class="map-part" id="part-head"/>
+                <rect x="35" y="45" width="30" height="70" rx="2" class="map-part" id="part-torso"/>
+                <rect x="25" y="48" width="50" height="10" rx="2" class="map-part" id="part-shoulders"/>
+                <rect x="22" y="50" width="8" height="55" rx="3" class="map-part" id="part-arms-l"/>
+                <rect x="70" y="50" width="8" height="55" rx="3" class="map-part" id="part-arms-r"/>
+                <rect x="35" y="115" width="30" height="8" class="map-part" id="part-hip"/>
+                <rect x="35" y="125" width="12" height="40" rx="2" class="map-part" id="part-thighs-l"/>
+                <rect x="53" y="125" width="12" height="40" rx="2" class="map-part" id="part-thighs-r"/>
+                <rect x="35" y="168" width="10" height="45" rx="2" class="map-part" id="part-legs-l"/>
+                <rect x="55" y="168" width="10" height="45" rx="2" class="map-part" id="part-legs-r"/>
+            </svg>
+        </section>
+
+        <section class="md:col-span-4 lg:col-span-3 space-y-6 no-print">
+            <div id="status-msg" class="text-[8.5px] uppercase tracking-widest opacity-40 font-bold">System // Precision Mode</div>
+            <div class="space-y-1">
+                <label class="blueprint-label">Project Name</label>
+                <input type="text" id="clientName" placeholder="E.G. KIEWHUO RESIDENCE" class="serif italic text-base">
+            </div>
+            <div class="grid grid-cols-2 gap-4 border-y border-black/5 py-4">
+                <div><label class="blueprint-label">Typology</label>
+                    <select id="type" class="minimal-caps text-xs focus:outline-none"><option value="standard">Standard</option><option value="dining">Dining</option><option value="club">Club</option><option value="recliner">Recliner</option><option value="stool">Stool</option></select>
+                </div>
+                <div><label class="blueprint-label">Recline</label>
+                    <select id="reclineLevel" class="minimal-caps text-xs focus:outline-none"><option value="standard">Standard</option><option value="relaxed">Relaxed</option></select>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 gap-y-5">
+                <div><label class="blueprint-label">Popliteal Height</label><div class="flex items-end"><input type="number" id="lowerLeg" value="45"><span class="input-unit u-text">cm</span></div></div>
+                <div><label class="blueprint-label">Buttock-Popliteal</label><div class="flex items-end"><input type="number" id="upperLeg" value="50"><span class="input-unit u-text">cm</span></div></div>
+                <div><label class="blueprint-label">Sitting Shoulder Height</label><div class="flex items-end"><input type="number" id="shoulder" value="65"><span class="input-unit u-text">cm</span></div></div>
+                <div><label class="blueprint-label">Sitting Elbow Height</label><div class="flex items-end"><input type="number" id="elbow" value="24"><span class="input-unit u-text">cm</span></div></div>
+                <div><label class="blueprint-label">Sitting Hip Breadth</label><div class="flex items-end"><input type="number" id="hip" value="40"><span class="input-unit u-text">cm</span></div></div>
+                <div><label class="blueprint-label text-orange-800">Cushion Thickness</label><div class="flex items-end"><input type="number" id="cushion" value="5"><span class="input-unit u-text">cm</span></div></div>
+            </div>
+            <button onclick="exportPDF()" class="w-full py-4 bg-[#333] text-white minimal-caps text-[9.5px] hover:bg-black transition-all mt-4 rounded-sm">Give this to your carpenter</button>
+        </section>
+
+        <section id="pdf-container" class="md:col-span-5 lg:col-span-7 bg-white p-6 md:p-10 border border-black/[0.03] shadow-sm flex flex-col justify-between rounded-lg">
+            <div class="pdf-safe-margin" style="padding-left: 20px;">
+                <div class="flex justify-between items-start mb-8 border-b border-black/10 pb-6">
+                    <div style="min-width: 300px;">
+                        <h2 class="minimal-caps text-base md:text-lg tracking-[0.3em]" style="margin-left: 0;">STUDIO CELINE33</h2>
+                        <p id="pdfProject" class="serif italic text-sm opacity-50">TECHNICAL BLUEPRINT</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="minimal-caps text-[8px] opacity-30 mb-1">Production Typology</p>
+                        <p id="furn-display" class="minimal-caps text-[10px] font-extrabold tracking-widest">STANDARD</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-8">
+                    <div id="sketch-area" class="lg:col-span-7 flex flex-col items-center bg-zinc-50/50 p-6 rounded-lg min-h-[260px] relative">
+                        <svg id="chair-sketch" width="280" height="200" viewBox="0 0 280 200" class="overflow-visible">
+                            <path id="sketch-back" d="M60 140 L40 40" stroke="black" stroke-width="2.5" fill="none"/>
+                            <rect id="sketch-seat" x="60" y="140" width="100" height="4" fill="black"/>
+                            <rect id="sketch-cushion-seat" x="60" y="130" width="100" height="10" rx="2" fill="#d1d5db"/>
+                            <line x1="65" y1="145" x2="65" y2="185" stroke="black" stroke-width="1.5"/>
+                            <line id="leg-front" x1="160" y1="145" x2="160" y2="185" stroke="black" stroke-width="1.5"/>
+                            
+                            <line class="science-line" x1="45" y1="60" x2="10" y2="60" />
+                            <text x="5" y="55" class="science-label">Thoracic Support</text>
+                            <line class="science-line" x1="45" y1="110" x2="10" y2="110" />
+                            <text x="5" y="105" class="science-label">Lumbar Center</text>
+                            <line class="science-line" x1="150" y1="135" x2="190" y2="135" />
+                            <text x="195" y="138" class="science-label">Popliteal Relief</text>
+                        </svg>
+                        <div id="benefit-box" class="text-[11px] md:text-[12px] italic opacity-60 border-t border-black/5 pt-4 w-full text-center px-4 font-light"></div>
+                    </div>
+                    <div class="lg:col-span-5 grid grid-cols-2 lg:grid-cols-1 gap-y-8 lg:gap-y-6 px-4">
+                        <div class="border-l-2 border-black/5 pl-4"><span class="blueprint-label">Frame Seat H</span><p id="resFrame" class="text-2xl font-light">--</p></div>
+                        <div class="border-l-2 border-black/5 pl-4"><span class="blueprint-label">Seat Depth</span><p id="resDepth" class="text-2xl font-light">--</p></div>
+                        <div class="border-l-2 border-black/5 pl-4"><span class="blueprint-label text-[#aa8e18]">Recline Degree</span><p id="resAngle" class="text-2xl font-light text-[#aa8e18]">--</p></div>
+                        <div class="border-l-2 border-black/5 pl-4"><span class="blueprint-label">Seat Width</span><p id="resWidth" class="text-2xl font-light">--</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="contact-info-footer" class="pt-6 border-t-2 border-black/5 flex justify-between items-end text-[10.5px] minimal-caps">
+                <div class="space-y-1">
+                    <p class="font-bold">Designed Simply // 2026</p>
+                    <p id="date-stamp" class="opacity-40"></p>
+                </div>
+                <div class="text-right space-y-1">
+                    <p class="font-bold text-[#aa8e18]">Instagram: @studioceline33</p>
+                    <p class="font-bold text-black opacity-80">Phone: +91 8787653957</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="no-print w-full py-8 text-center mt-8 border-t border-black/5 bg-zinc-50">
+        <p class="serif italic text-[12px] md:text-[14px] opacity-70 mb-4 font-light">If you need help...</p>
+        <div class="flex flex-col md:flex-row justify-center items-center gap-6 md:gap-12">
+            <a href="https://www.instagram.com/studioceline33/" target="_blank" class="minimal-caps text-[10px] hover:text-[#aa8e18]">Instagram</a>
+            <a href="tel:+918787653957" class="minimal-caps text-[10px] hover:text-[#aa8e18]">+91 8787653957</a>
+        </div>
+    </footer>
+
+    <script>
+        let isImp = false;
+        const ids = ['lowerLeg', 'upperLeg', 'shoulder', 'elbow', 'hip', 'cushion', 'clientName', 'type', 'reclineLevel'];
+
+        function toFrac(v) {
+            let w = Math.floor(v), r = Math.round((v-w)*8);
+            if (r === 0) return w + '"';
+            if (r === 8) return (w+1) + '"';
+            let n=r, d=8; if(n%4===0){n/=4;d/=4;} else if(n%2===0){n/=2;d/=2;}
+            return `${w > 0 ? w+' ' : ''}${n}/${d}"`;
+        }
+
+        function toggleScience() {
+            const container = document.getElementById('sketch-area');
+            const isActive = container.classList.toggle('science-active');
+            document.getElementById('scienceBtn').innerText = isActive ? "Insights: ON" : "Insights: OFF";
+        }
+
+        function highlight(p) {
+            unhighlight();
+            if(p==='lower') {document.getElementById('part-legs-l').classList.add('active-part'); document.getElementById('part-legs-r').classList.add('active-part');}
+            if(p==='upper') {document.getElementById('part-thighs-l').classList.add('active-part'); document.getElementById('part-thighs-r').classList.add('active-part');}
+            if(p==='shoulder') document.getElementById('part-shoulders').classList.add('active-part');
+            if(p==='elbow') {document.getElementById('part-arms-l').classList.add('active-part'); document.getElementById('part-arms-r').classList.add('active-part');}
+            if(p==='hip') document.getElementById('part-hip').classList.add('active-part');
+        }
+        function unhighlight() { document.querySelectorAll('.map-part').forEach(p => p.classList.remove('active-part')); }
+
+        function calculate() {
+            const f = isImp ? 2.54 : 1;
+            const legL = (parseFloat(document.getElementById('lowerLeg').value) || 45) * f;
+            const cushion = (parseFloat(document.getElementById('cushion').value) || 5) * f;
+            const legU = (parseFloat(document.getElementById('upperLeg').value) || 50) * f;
+            const hip = (parseFloat(document.getElementById('hip').value) || 40) * f;
+            const shld = (parseFloat(document.getElementById('shoulder').value) || 65) * f;
+            
+            document.getElementById('pdfProject').innerText = (document.getElementById('clientName').value || "TECHNICAL BLUEPRINT").toUpperCase();
+            const stat = document.getElementById('status-msg');
+            if (legL < 20 || legL > 90 || shld > 120) {
+                stat.innerText = "Warning: your carpenter might question you"; stat.classList.add('warning-text');
+            } else {
+                stat.innerText = "Ready // Precision Mode"; stat.classList.remove('warning-text');
+            }
+
+            const type = document.getElementById('type').value, rec = document.getElementById('reclineLevel').value;
+            let frameH = legL - cushion, depth = legU - 5, width = hip + 10, angle = 100, backX = 40, benefit = "";
+
+            if(type === 'recliner') { angle = rec === 'standard' ? 125 : 135; frameH -= 8; depth += 4; backX = rec === 'standard' ? -10 : -30; benefit = "Deep decompression for circulatory relief."; }
+            else if(type === 'dining') { angle = rec === 'standard' ? 95 : 100; backX = rec === 'standard' ? 55 : 50; benefit = "Upright focus for active social engagement."; }
+            else { angle = rec === 'standard' ? 100 : 105; backX = rec === 'standard' ? 45 : 35; benefit = "Neutral support for the natural lumbar S-curve."; }
+
+            document.getElementById('furn-display').innerText = type.toUpperCase();
+            document.getElementById('benefit-box').innerText = benefit;
+
+            const dW = depth * 2.2;
+            document.getElementById('sketch-seat').setAttribute('width', dW);
+            document.getElementById('sketch-cushion-seat').setAttribute('width', dW);
+            document.getElementById('sketch-cushion-seat').setAttribute('height', (cushion * 1.8));
+            document.getElementById('sketch-cushion-seat').setAttribute('y', 140 - (cushion * 1.8));
+            document.getElementById('sketch-back').setAttribute('d', `M60 140 L${backX} ${140 - (shld * 1.2)}`);
+            document.getElementById('leg-front').setAttribute('x1', 60 + dW); document.getElementById('leg-front').setAttribute('x2', 60 + dW);
+
+            const outF = isImp ? 0.3937 : 1;
+            const fmt = (v) => isImp ? toFrac(v * outF) : (v * outF).toFixed(1) + (isImp ? "" : " cm");
+            document.getElementById('resFrame').innerText = fmt(frameH);
+            document.getElementById('resDepth').innerText = fmt(depth);
+            document.getElementById('resAngle').innerText = angle + "°";
+            document.getElementById('resWidth').innerText = fmt(width);
+            document.getElementById('date-stamp').innerText = new Date().toDateString();
+        }
+
+        document.getElementById('unitToggle').addEventListener('click', function() {
+            isImp = !isImp; document.getElementById('toggleCircle').style.transform = isImp ? 'translateX(16px)' : 'translateX(0)';
+            document.querySelectorAll('.u-text').forEach(el => el.innerText = isImp ? "in" : "cm"); calculate();
+        });
+
+        async function exportPDF() {
+            const e = document.getElementById('pdf-container');
+            e.classList.add('pdf-export-mode'); 
+            
+            const opt = {
+                margin: 0.5, 
+                filename: `SC33_TECHNICAL_BLUEPRINT.pdf`, 
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { 
+                    scale: 4, 
+                    useCORS: true, 
+                    letterRendering: true,
+                    windowWidth: 1200 // Prevent mobile squishing
+                },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            try {
+                await html2pdf().from(e).set(opt).save();
+            } finally {
+                e.classList.remove('pdf-export-mode'); 
+            }
+        }
+
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) {
+                el.addEventListener('input', calculate);
+                if(el.tagName === 'INPUT') {
+                    el.addEventListener('focus', () => {
+                        if(id === 'lowerLeg') highlight('lower'); else if(id === 'upperLeg') highlight('upper');
+                        else if(id === 'shoulder') highlight('shoulder'); else if(id === 'elbow') highlight('elbow');
+                        else if(id === 'hip') highlight('hip');
+                    });
+                    el.addEventListener('blur', unhighlight);
+                }
+            }
+        });
+        calculate();
+    </script>
+</body>
+</html>
